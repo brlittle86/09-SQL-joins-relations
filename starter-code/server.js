@@ -110,7 +110,7 @@ app.post('/articles', function(request, response) {
       ], // DONE: Add the data from our new article, including the author_id, as data for the SQL query.
       function(err) {
         if (err) console.error(err);
-        // DONE: What number in the full-stack diagram best matches what is happening in line 114? #4
+        // DONE: What number in the full-stack diagram best matches what is happening in line 114? #5
         response.send('insert complete');
       }
     );
@@ -169,7 +169,7 @@ app.delete('/articles/:id', function(request, response) {
     // It comes from the data contained within the instance of the Article object the method is being executed on. Express adds the id key value to the params of the Article held in request.
     [request.params.id]
   );
-  // DONE: What number in the full-stack diagram best matches what is happening in line 171? #4
+  // DONE: What number in the full-stack diagram best matches what is happening in line 171? #5
   response.send('Delete complete');
 });
 
