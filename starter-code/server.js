@@ -135,7 +135,11 @@ app.put('/articles/:id', function (request, response) {
       `UPDATE authors
       SET author=$1, "authorUrl"=$2
       WHERE author_id=$3;`, // DONE: Write a SQL query to update an existing author record
-      [request.body.author, request.body.authorUrl, author_id] // DONE: Add the values for this table as data for the SQL query
+      [
+        request.body.author, 
+        request.body.authorUrl, 
+        author_id
+      ] // DONE: Add the values for this table as data for the SQL query
     )
   }
 
