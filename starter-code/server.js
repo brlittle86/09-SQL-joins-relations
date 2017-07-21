@@ -14,22 +14,22 @@ const client = new pg.Client(conString);
 client.connect();
 
 app.use(bodyParser.json());
-app.use(bodyParser.urlencoded({extended: true}));
+app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.static('./public'));
 
 // Routes for requesting HTML resources
-app.get('/', function(request, response) {
-  response.sendFile('index.html', {root: '.'});
+app.get('/', function (request, response) {
+  response.sendFile('index.html', { root: '.' });
 });
 
-app.get('/new', function(request, response) {
-  response.sendFile('new.html', {root: '.'});
+app.get('/new', function (request, response) {
+  response.sendFile('new.html', { root: '.' });
 });
 
 // Following are the routes for making API calls to enact CRUD Operations on our database
 
 // TODO: Some of the following questions will refer back to the image called 'full-stack-diagram' that has been added to the lab directory. In that image you will see that the various parts of the application's activity have been numbered 1-5. When prompted in the following questions, identify which number best matches the location of a given process. For instance, the following line of code, where the server is handling a request from the view layer, would match up with #2.
-app.get('/articles', function(request, response) {
+app.get('/articles', function (request, response) {
   // REVIEW: We now have two queries which create separate tables in our DB, and reference the authors in our articles.
   // DONE: What number in the full-stack diagram best matches what is happening in lines 35-42?
   // #3
@@ -52,18 +52,18 @@ app.get('/articles', function(request, response) {
       body TEXT NOT NULL
     );`
   ) // DONE: Referring to lines 45-52, answer the following questions:
-    // What is a primary key?
-    // A primary key is a identifier that is generated at the time of a record being entered - in this case, it is serialized, so that the key is just an integer higher than previous key.
-    // +++++++++++++++++++++
-    // What does VARCHAR mean?
-    // It is a string that can hold a variable number of characters.
-    // +++++++++++++++++++++
+  // What is a primary key?
+  // A primary key is a identifier that is generated at the time of a record being entered - in this case, it is serialized, so that the key is just an integer higher than previous key.
+  // +++++++++++++++++++++
+  // What does VARCHAR mean?
+  // It is a string that can hold a variable number of characters.
+  // +++++++++++++++++++++
   // REVIEW: This query will join the data together from our tables and send it back to the client.
   client.query(`
     SELECT * FROM articles
     INNER JOIN authors
       ON articles.author_id=authors.author_id;`, // DONE: Write a SQL query which inner joins the data from articles and authors from all records
-    function(err, result) {
+    function (err, result) {
       if (err) console.error(err);
       response.send(result.rows);
     }
@@ -72,11 +72,11 @@ app.get('/articles', function(request, response) {
 
 // DONE: How is a 'post' route different than a 'get' route?
 // A post route is writing information into the table on the server, while a get route is reading information from the table on the server.
-app.post('/articles', function(request, response) {
+app.post('/articles', function (request, response) {
   client.query(
     'INSERT INTO authors(author, "authorUrl") VALUES($1, $2) ON CONFLICT DO NOTHING', // DONE: Write a SQL query to insert a new author, ON CONFLICT DO NOTHING
     [request.body.author, request.body.authorUrl], // DONE: Add the author and "authorUrl" as data for the SQL query
-    function(err) {
+    function (err) {
       if (err) console.error(err)
       queryTwo() // This is our second query, to be executed when this first query is complete.
     }
@@ -88,7 +88,7 @@ app.post('/articles', function(request, response) {
       // It is a template literal operator that, in this case, is referring to the value of the included data below at [request.body.author]. If the value is 'John Candy', then the SQL code will read: SELECT author_id FROM authors WHERE author='John Candy';
       `SELECT author_id FROM authors WHERE author=$1`, // DONE: Write a SQL query to retrieve the author_id from the authors table for the new article
       [request.body.author], // DONE: Add the author name as data for the SQL query
-      function(err, result) {
+      function (err, result) {
         if (err) console.error(err)
         queryThree(result.rows[0].author_id) // This is our third query, to be executed when the second is complete. We are also passing the author_id into our third query
       }
@@ -96,7 +96,7 @@ app.post('/articles', function(request, response) {
   }
 
   function queryThree(author_id) {
-      // DONE: What number in the full-stack diagram best matches what is happening in line 100? #3
+    // DONE: What number in the full-stack diagram best matches what is happening in line 100? #3
     client.query(
       `INSERT INTO
       articles(author_id, title, category, "publishedOn", body)
@@ -108,7 +108,7 @@ app.post('/articles', function(request, response) {
         request.body.publishedOn,
         request.body.body
       ], // DONE: Add the data from our new article, including the author_id, as data for the SQL query.
-      function(err) {
+      function (err) {
         if (err) console.error(err);
         // DONE: What number in the full-stack diagram best matches what is happening in line 114? #5
         response.send('insert complete');
@@ -117,11 +117,11 @@ app.post('/articles', function(request, response) {
   }
 });
 
-app.put('/articles/:id', function(request, response) {
+app.put('/articles/:id', function (request, response) {
   client.query(
     `SELECT author_id FROM authors WHERE author=$1`, // DONE: Write a SQL query to retrieve the author_id from the authors table for the new article
     [request.body.author], // DONE: Add the author name as data for the SQL query
-    function(err, result) {
+    function (err, result) {
       if (err) console.error(err)
       queryTwo(result.rows[0].author_id)
       queryThree(result.rows[0].author_id)
@@ -152,7 +152,7 @@ app.put('/articles/:id', function(request, response) {
         request.body.body,
         request.params.id
       ], // DONE: Add the values for this table as data for the SQL query
-      function(err) {
+      function (err) {
         if (err) console.error(err);
         response.send('insert complete');
       }
@@ -160,9 +160,9 @@ app.put('/articles/:id', function(request, response) {
   }
 });
 
-  // DONE: What number in the full-stack diagram best matches what is happening in line 163? #2
-app.delete('/articles/:id', function(request, response) {
-    // DONE: What number in the full-stack diagram best matches what is happening in lines 165? #3
+// DONE: What number in the full-stack diagram best matches what is happening in line 163? #2
+app.delete('/articles/:id', function (request, response) {
+  // DONE: What number in the full-stack diagram best matches what is happening in lines 165? #3
   client.query(
     `DELETE FROM articles WHERE article_id=$1;`,
     // DONE: What does the value in 'request.params.id' come from? If unsure, look in the Express docs.
@@ -173,14 +173,14 @@ app.delete('/articles/:id', function(request, response) {
   response.send('Delete complete');
 });
 
-app.delete('/articles', function(request, response) {
+app.delete('/articles', function (request, response) {
   client.query(
     'DELETE FROM articles;'
   );
   response.send('Delete complete');
 });
 
-app.listen(PORT, function() {
+app.listen(PORT, function () {
   console.log(`Server started on port ${PORT}!`);
 });
 
